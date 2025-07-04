@@ -141,13 +141,34 @@
       z-index: 10;
       display: none;
     }
+    /* Music button style */
+    #musicBtn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 1000;
+      background: #e6fce4;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      border: 2px solid #98dd96;
+      font-size: 1.5em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
 <body>
+  <!-- Background music and music control button -->
+  <audio id="bgMusic" src="background-song.mp3" loop preload="auto"></audio>
+  <button id="musicBtn" onclick="toggleMusic()">🎵</button>
 
   <!-- 1. Greetings with Frog -->
   <div class="chapter active" id="chapter-1">
-    <audio id="frogSound" src="frog.mp3" preload="auto"></audio>
+    <audio id="frogSound" src="46241__esformouse__frog.wav" preload="auto"></audio>
     <div class="frog-emoji" id="greetingFrog" onclick="frogGreetingJump(this)">🐸</div>
     <h1>Happy 20th Birthday, Alina! 💚</h1>
     <p>
@@ -247,6 +268,7 @@
     </p>
     <div id="countdown"></div>
     <canvas id="confettiCanvas"></canvas>
+    <audio id="birthdaySong" src="happy-birthday-music-300687.mp3"></audio>
     <p>
       I love you more every hop of the way. <br>
       <strong>Forever your frog prince 🐸❤️</strong>
@@ -258,20 +280,27 @@
     let current = 1;
     const frogName = "Froggy";
     let songPlaying = false;
+    let musicPlaying = false;
+    let musicBtn = document.getElementById('musicBtn');
 
     // --- Navigation ---
     function nextChapter() {
       document.getElementById(`chapter-${current}`).classList.remove('active');
+      // Stop birthday song if leaving chapter 7
+      if (current === 7) stopBirthdaySong();
       current++;
       document.getElementById(`chapter-${current}`).classList.add('active');
       if (current === 2) startFlyGame();
       if (current === 7) {
         showConfetti();
         startCountdown();
+        playBirthdaySong();
       }
     }
     function restart() {
       document.getElementById(`chapter-${current}`).classList.remove('active');
+      // Stop birthday song if restarting from chapter 7
+      if (current === 7) stopBirthdaySong();
       current = 1;
       document.getElementById(`chapter-1`).classList.add('active');
       hideConfetti();
@@ -292,6 +321,8 @@
         audio.currentTime = 0;
         audio.play();
       }
+      // Optionally start background music on first click (browsers require user interaction)
+      if (!musicPlaying) toggleMusic();
     }
 
     // --- Catch the Fly Game ---
@@ -317,13 +348,16 @@
     // --- 10 Reasons Song ---
     function toggleSong() {
       const song = document.getElementById('song');
+      const bgMusic = document.getElementById('bgMusic');
       if (!songPlaying) {
+        if (bgMusic && !bgMusic.paused) bgMusic.pause();
         song.play();
         songPlaying = true;
       } else {
         song.pause();
         song.currentTime = 0;
         songPlaying = false;
+        if (bgMusic && musicPlaying) bgMusic.play();
       }
     }
     function stopSong() {
@@ -331,6 +365,40 @@
       song.pause();
       song.currentTime = 0;
       songPlaying = false;
+    }
+
+    // --- Background Music ---
+    function toggleMusic() {
+      const music = document.getElementById('bgMusic');
+      if (!musicPlaying) {
+        music.play();
+        musicPlaying = true;
+        musicBtn.textContent = '⏸️';
+      } else {
+        music.pause();
+        musicPlaying = false;
+        musicBtn.textContent = '🎵';
+      }
+    }
+    // Update music button icon on page load
+    window.addEventListener('DOMContentLoaded', function() {
+      musicBtn.textContent = '🎵';
+    });
+
+    // --- Birthday Song in Last Chapter ---
+    function playBirthdaySong() {
+      var song = document.getElementById('birthdaySong');
+      if (song) {
+        song.currentTime = 0;
+        song.play();
+      }
+    }
+    function stopBirthdaySong() {
+      var song = document.getElementById('birthdaySong');
+      if (song) {
+        song.pause();
+        song.currentTime = 0;
+      }
     }
 
     // --- Confetti for Birthday ---

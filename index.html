@@ -165,10 +165,11 @@
   <!-- Background music and music control button -->
   <audio id="bgMusic" src="background-song.mp3" loop preload="auto"></audio>
   <button id="musicBtn" onclick="toggleMusic()">🎵</button>
+  <!-- One frog sound element for all -->
+  <audio id="frogSound" src="46241__esformouse__frog.wav" preload="auto"></audio>
 
   <!-- 1. Greetings with Frog -->
   <div class="chapter active" id="chapter-1">
-    <audio id="frogSound" src="46241__esformouse__frog.wav" preload="auto"></audio>
     <div class="frog-emoji" id="greetingFrog" onclick="frogGreetingJump(this)">🐸</div>
     <h1>Happy 20th Birthday, Alina! 💚</h1>
     <p>
@@ -181,7 +182,7 @@
 
   <!-- 2. Catch the Fly Game -->
   <div class="chapter" id="chapter-2">
-    <div class="frog-emoji" id="frogGameEmoji" onclick="frogJump(this)">🐸</div>
+    <div class="frog-emoji" id="frogGameEmoji" onclick="frogGreetingJump(this)">🐸</div>
     <h1>Let’s Play: Catch the Fly!</h1>
     <div id="fly-game">
       <span id="fly" onclick="catchFly()">🪰</span>
@@ -193,7 +194,7 @@
 
   <!-- 3. Our Timeline & First Leap -->
   <div class="chapter" id="chapter-3">
-    <div class="frog-emoji" onclick="frogJump(this)">🌿</div>
+    <div class="frog-emoji" onclick="frogGreetingJump(this)">🌿</div>
     <h1>Our Timeline</h1>
     <ul class="milestones">
       <li><strong>Jan 1, 2024:</strong> We first met 💫</li>
@@ -208,7 +209,7 @@
 
   <!-- 4. Love Notes -->
   <div class="chapter" id="chapter-4">
-    <div class="frog-emoji" onclick="frogJump(this)">💌</div>
+    <div class="frog-emoji" onclick="frogGreetingJump(this)">💌</div>
     <h1>Love Notes</h1>
     <p>
       Alina, you are the lily pad my heart always returns to.<br>
@@ -220,7 +221,7 @@
 
   <!-- 5. Photo Gallery -->
   <div class="chapter" id="chapter-5">
-    <div class="frog-emoji" onclick="frogJump(this)">📸</div>
+    <div class="frog-emoji" onclick="frogGreetingJump(this)">📸</div>
     <h1>Our Memories</h1>
     <div class="gallery">
       <!-- Replace src with your real image URLs or add more <img> tags -->
@@ -238,7 +239,7 @@
 
   <!-- 6. 10 Reasons I Love You + Song -->
   <div class="chapter" id="chapter-6">
-    <div class="frog-emoji" onclick="frogJump(this)">🎵</div>
+    <div class="frog-emoji" onclick="frogGreetingJump(this)">🎵</div>
     <h1>10 Reasons I Love You</h1>
     <ul class="reasons-list">
       <li>1. Your laugh makes my world brighter.</li>
@@ -253,13 +254,13 @@
       <li>10. I love you more with every sunrise and every ribbit. 💚</li>
     </ul>
     <button onclick="toggleSong()">Play Our Song 🎶</button>
-    <audio id="song" src="your-song.mp3"></audio>
+    <audio id="song" src="Project Name-VEED.mp3"></audio>
     <button onclick="nextChapter()">Next →</button>
   </div>
 
   <!-- 7. Happy Birthday Letter & Countdown -->
   <div class="chapter" id="chapter-7">
-    <div class="frog-emoji" onclick="frogJump(this)">🎂</div>
+    <div class="frog-emoji" onclick="frogGreetingJump(this)">🎂</div>
     <h1>Happy Birthday, Alina!</h1>
     <p>
       My love, may this year bring us more giggles, more adventures, and more cuddles.<br>
@@ -307,13 +308,7 @@
       stopSong();
     }
 
-    // --- Frog Animation ---
-    function frogJump(el) {
-      el.classList.add('hop');
-      setTimeout(() => el.classList.remove('hop'), 500);
-    }
-
-    // --- Greeting frog: animation + sound ---
+    // --- Frog Animation & Sound ---
     function frogGreetingJump(el) {
       frogJump(el);
       let audio = document.getElementById('frogSound');
@@ -323,6 +318,10 @@
       }
       // Optionally start background music on first click (browsers require user interaction)
       if (!musicPlaying) toggleMusic();
+    }
+    function frogJump(el) {
+      el.classList.add('hop');
+      setTimeout(() => el.classList.remove('hop'), 500);
     }
 
     // --- Catch the Fly Game ---

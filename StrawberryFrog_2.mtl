@@ -1,6 +1,8 @@
 newmtl aiStandardSurface1SG
 illum 4
-Kd 0.00 0.00 0.00
+Kd 0.20 0.60 0.20
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 Ni 0.00
+# If you have a texture, add this line:
+map_Kd StrawberryFrog_Textures/frog_diffuse.png

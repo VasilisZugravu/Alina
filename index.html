@@ -12,6 +12,14 @@
       color: #2d4c1e;
       overflow: hidden;
     }
+    #canvas-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
     #main-content {
       position: relative;
       z-index: 2;
@@ -31,10 +39,20 @@
       font-size: 2.5em;
       margin-bottom: 20px;
     }
-    p {
-      font-size: 1.3em;
-      max-width: 700px;
+    /* Shared box style */
+    .reasons-list {
+      text-align: left;
       margin: 0 auto 30px;
+      font-size: 1.15em;
+      max-width: 700px;
+      background: #f7fff7;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .reasons-list p, .reasons-list li {
+      margin-bottom: 10px;
+      line-height: 1.5;
     }
     button {
       background: #98dd96;
@@ -45,6 +63,7 @@
       cursor: pointer;
       transition: background 0.3s;
       margin: 10px;
+      z-index: 3;
     }
     button:hover {
       background: #78c878;
@@ -87,12 +106,6 @@
       padding: 20px 32px;
       box-shadow: 0 2px 8px #0001;
     }
-    .milestones li {
-      margin-bottom: 12px;
-      line-height: 1.5;
-      list-style: none;
-      position: relative;
-    }
     .milestones li:before {
       content: "•";
       color: #4e9c4f;
@@ -115,20 +128,6 @@
       border: 2px solid #98dd96;
       box-shadow: 0 2px 8px #0002;
     }
-    .reasons-list {
-      text-align: left;
-      margin: 0 auto 18px;
-      font-size: 1.15em;
-      max-width: 440px;
-      background: #f7fff7;
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 2px 8px #0001;
-    }
-    .reasons-list li {
-      margin-bottom: 10px;
-      line-height: 1.5;
-    }
     #countdown {
       font-size: 2em;
       font-weight: bold;
@@ -145,7 +144,6 @@
       z-index: 10;
       display: none;
     }
-    /* Music button style */
     #musicBtn {
       position: fixed;
       top: 15px;
@@ -164,51 +162,52 @@
       justify-content: center;
     }
   </style>
+  <!-- three.js, gsap, confetti -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
+  <div id="canvas-container"></div>
   <div id="main-content">
-    <!-- Background music and music control button -->
+    <!-- Audio & Controls -->
     <audio id="bgMusic" src="background-song.mp3" loop preload="auto"></audio>
     <button id="musicBtn" onclick="toggleMusic()">🎵</button>
-    <!-- One frog sound element for all -->
     <audio id="frogSound" src="46241__esformouse__frog.wav" preload="auto"></audio>
 
-    <!-- 1. Greetings with Frog -->
+    <!-- 1. Greeting (boxed) -->
     <div class="chapter active" id="chapter-1">
       <div class="frog-emoji" id="greetingFrog" onclick="frogGreetingJump(this)">🐸</div>
       <h1>Happy 20th Birthday, Vatraxaki MOU 💚</h1>
-      <p>
-        My sweet Alisha,<br>
+      <div class="reasons-list">
+        <p>My sweet Alisha,<br>
         Welcome to your magical frog birthday adventure!<br>
-        Click the frog for a surprise 🐸💚
-      </p>
+        Click the frog for a surprise 🐸💚</p>
+      </div>
       <button onclick="nextChapter()">Next →</button>
     </div>
 
-    <!-- 2. Catch the Fly Game -->
+    <!-- 2. Fly Game -->
     <div class="chapter" id="chapter-2">
-      <div class="frog-emoji" id="frogGameEmoji" onclick="frogGreetingJump(this)">🐸</div>
+      <div class="frog-emoji" onclick="frogGreetingJump(this)">🐸</div>
       <h1>Let’s Play: Catch the Fly!</h1>
       <div id="fly-game">
         <span id="fly" onclick="catchFly()">🪰</span>
-        <p id="fly-instr">Help Froggy catch the fly by clicking it! <br>
-          (Even the happiest frogs need snacks!)</p>
+        <p id="fly-instr">Help Froggy catch the fly by clicking it!<br>(Even the happiest frogs need snacks!)</p>
       </div>
       <button id="flyNextBtn" style="display:none;" onclick="nextChapter()">Next →</button>
     </div>
 
-    <!-- 3. Our Timeline & First Leap -->
+    <!-- 3. Timeline -->
     <div class="chapter" id="chapter-3">
       <div class="frog-emoji" onclick="frogGreetingJump(this)">🌿</div>
       <h1>Our Timeline</h1>
       <ul class="milestones">
         <li><strong>Nov 7, 2024:</strong> We first texted 💫</li>
-        <li><strong>Dec 23, 2024:</strong> We first met  ❤️</li>
+        <li><strong>Dec 23, 2024:</strong> We first met ❤️</li>
         <li><strong>Jan 19, 2024:</strong> We got in a Relationship 🥰</li>
       </ul>
-      <p>
-        Every milestone with you is a leap my heart will never forget, My blackberry. 🐸💌
-      </p>
+      <p>Every milestone with you is a leap my heart will never forget, My blackberry. 🐸💌</p>
       <button onclick="nextChapter()">Next →</button>
     </div>
 
@@ -216,16 +215,17 @@
     <div class="chapter" id="chapter-4">
       <div class="frog-emoji" onclick="frogGreetingJump(this)">💌</div>
       <h1>Love Notes</h1>
-      <p>
-        Agapula mou, you are the lily pad my heart always returns to.<br>
+      <div class="reasons-list">
+        <p>Agapula mou, you are the lily pad my heart always returns to.<br>
         You are my brightest star, my sweetest dream, and my favorite adventure.<br>
-        Thank you for being my calm in chaos, my laughter in silence, and my strength when I falter. I don’t just love you I’m endlessly grateful for you <br>
-        I love you with every ribbit, every giggle, and every leap Vatraxaki MOU. 🐸🌹
-      </p>
+        Thank you for being my calm in chaos, my laughter in silence, and my strength when I falter.<br>
+        I don’t just love you—I’m endlessly grateful for you.<br>
+        I love you with every ribbit, every giggle, and every leap, Vatraxaki MOU. 🐸🌹</p>
+      </div>
       <button onclick="nextChapter()">Next →</button>
     </div>
 
-    <!-- 5. Photo Gallery -->
+    <!-- 5. Gallery -->
     <div class="chapter" id="chapter-5">
       <div class="frog-emoji" onclick="frogGreetingJump(this)">📸</div>
       <h1>Our Memories</h1>
@@ -235,14 +235,11 @@
         <img src="your-photo3.jpg" alt="Memory 3"/>
         <img src="your-photo4.jpg" alt="Memory 4"/>
       </div>
-      <p>
-        Every moment with you is a treasure.<br>
-        <em>Here’s to many more memories, my love!</em>
-      </p>
+      <p>Every moment with you is a treasure.<br><em>Here’s to many more memories, my love!</em></p>
       <button onclick="nextChapter()">Next →</button>
     </div>
 
-    <!-- 6. 10 Reasons I Love You + Song -->
+    <!-- 6. Reasons & Song -->
     <div class="chapter" id="chapter-6">
       <div class="frog-emoji" onclick="frogGreetingJump(this)">🎵</div>
       <h1>10 Reasons I Love You</h1>
@@ -263,34 +260,31 @@
       <button onclick="nextChapter()">Next →</button>
     </div>
 
-    <!-- 7. Happy Birthday Letter & Countdown -->
+    <!-- 7. Final & Countdown -->
     <div class="chapter" id="chapter-7">
       <div class="frog-emoji" onclick="frogGreetingJump(this)">🎂</div>
       <h1>Happy Birthday, Vatraxaki MOU!</h1>
-      <p>
-        My love, may this year bring us more giggles, more adventures, and more cuddles.<br>
+      <div class="reasons-list">
+        <p>My love, may this year bring us more giggles, more adventures, and more cuddles.<br>
         No matter where you are, my heart is always hugging you.<br>
-        Next hug in:
-      </p>
-      <div id="countdown"></div>
+        Next hug in:</p>
+        <div id="countdown"></div>
+        <audio id="birthdaySong" src="happy-birthday-music-300687.mp3"></audio>
+        <p>I love you more every hop of the way.<br><strong>Forever your frog prince 🐸❤️</strong></p>
+      </div>
       <canvas id="confettiCanvas"></canvas>
-      <audio id="birthdaySong" src="happy-birthday-music-300687.mp3"></audio>
-      <p>
-        I love you more every hop of the way. <br>
-        <strong>Forever your frog prince 🐸❤️</strong>
-      </p>
+      <button id="celebrateBtn">Celebrate 🎉</button>
       <button onclick="restart()">Hop Again 🔀</button>
     </div>
   </div>
 
   <script>
-    let current = 1;
-    const frogName = "Froggy";
-    let songPlaying = false;
-    let musicPlaying = false;
-    let musicBtn = document.getElementById('musicBtn');
+    // State
+    let current = 1, songPlaying = false, musicPlaying = false;
+    const frogName = "Froggy", musicBtn = document.getElementById('musicBtn');
+    const nextHugDate = new Date("2025-09-20T18:00:00");
 
-    // --- Navigation ---
+    // Navigation
     function nextChapter() {
       document.getElementById(`chapter-${current}`).classList.remove('active');
       if (current === 7) stopBirthdaySong();
@@ -312,16 +306,16 @@
       stopSong();
     }
 
-    // --- Frog Jump & Sound ---
+    // Frog hop
     function frogGreetingJump(el) {
       el.classList.add('hop');
-      setTimeout(() => el.classList.remove('hop'), 500);
+      setTimeout(()=>el.classList.remove('hop'),500);
       const audio = document.getElementById('frogSound');
-      if (audio) { audio.currentTime = 0; audio.play(); }
+      audio.currentTime = 0; audio.play();
       if (!musicPlaying) toggleMusic();
     }
 
-    // --- Catch the Fly Game ---
+    // Fly game
     function startFlyGame() {
       document.getElementById('flyNextBtn').style.display = 'none';
       document.getElementById('fly').style.display = 'inline-block';
@@ -331,20 +325,18 @@
     function moveFly() {
       const fly = document.getElementById('fly');
       fly.style.position = 'absolute';
-      fly.style.left = (50 + Math.random() * 400) + 'px';
-      fly.style.top = (100 + Math.random() * 200) + 'px';
+      fly.style.left = (50 + Math.random()*400)+'px';
+      fly.style.top = (100 + Math.random()*200)+'px';
     }
     function catchFly() {
       document.getElementById('fly').style.display = 'none';
-      document.getElementById('fly-instr').textContent =
-        `${frogName} caught the fly! Yum! 🐸🪰`;
+      document.getElementById('fly-instr').textContent = `${frogName} caught the fly! Yum! 🐸🪰`;
       document.getElementById('flyNextBtn').style.display = 'inline-block';
     }
 
-    // --- Song Toggle ---
+    // Song toggle
     function toggleSong() {
-      const song = document.getElementById('song');
-      const bg = document.getElementById('bgMusic');
+      const song = document.getElementById('song'), bg = document.getElementById('bgMusic');
       if (!songPlaying) {
         if (bg && !bg.paused) bg.pause();
         song.play(); songPlaying = true;
@@ -358,7 +350,7 @@
       song.pause(); song.currentTime = 0; songPlaying = false;
     }
 
-    // --- Background Music ---
+    // Music toggle
     function toggleMusic() {
       const music = document.getElementById('bgMusic');
       if (!musicPlaying) {
@@ -367,67 +359,27 @@
         music.pause(); musicPlaying = false; musicBtn.textContent = '🎵';
       }
     }
-    window.addEventListener('DOMContentLoaded', ()=> {
-      musicBtn.textContent = '🎵';
-    });
+    window.addEventListener('DOMContentLoaded', ()=>musicBtn.textContent = '🎵');
 
-    // --- Birthday Song ---
+    // Birthday song
     function playBirthdaySong() {
-      const song = document.getElementById('birthdaySong');
-      if (song) { song.currentTime = 0; song.play(); }
+      const s = document.getElementById('birthdaySong');
+      s.currentTime = 0; s.play();
     }
     function stopBirthdaySong() {
-      const song = document.getElementById('birthdaySong');
-      if (song) { song.pause(); song.currentTime = 0; }
+      const s = document.getElementById('birthdaySong');
+      s.pause(); s.currentTime = 0;
     }
 
-    // --- Confetti ---
-    let confettiActive = false;
+    // Confetti show/hide
     function showConfetti() {
-      const canvas = document.getElementById('confettiCanvas');
-      canvas.style.display = 'block';
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      let particles = [];
-      for (let i = 0; i < 100; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * -canvas.height,
-          r: Math.random() * 6 + 4,
-          d: Math.random() * 100,
-          color: `hsl(${Math.random()*360},70%,60%)`,
-        });
-      }
-      confettiActive = true;
-      (function draw() {
-        if (!confettiActive) return;
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        particles.forEach(p => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fillStyle = p.color;
-          ctx.fill();
-          p.y += Math.cos(p.d) + 1 + p.r/2;
-          p.x += Math.sin(0.01*p.d);
-          if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
-        });
-        requestAnimationFrame(draw);
-      })();
+      document.getElementById('confettiCanvas').style.display = 'block';
     }
     function hideConfetti() {
-      confettiActive = false;
       document.getElementById('confettiCanvas').style.display = 'none';
     }
-    window.addEventListener('resize', ()=> {
-      const c = document.getElementById('confettiCanvas');
-      if (c.style.display === 'block') {
-        c.width = window.innerWidth; c.height = window.innerHeight;
-      }
-    });
 
-    // --- Countdown ---
-    const nextHugDate = new Date("2025-09-20T18:00:00");
+    // Countdown
     function startCountdown() {
       updateCountdown();
       setInterval(updateCountdown, 1000);
@@ -435,14 +387,89 @@
     function updateCountdown() {
       const now = new Date();
       let diff = Math.floor((nextHugDate - now) / 1000);
-      if (diff < 0) diff = 0;
-      const days = Math.floor(diff / 86400);
-      const hrs = Math.floor((diff % 86400) / 3600);
-      const mins = Math.floor((diff % 3600) / 60);
-      const secs = diff % 60;
-      document.getElementById('countdown').textContent =
-        `${days}d ${hrs}h ${mins}m ${secs}s`;
+      diff = diff < 0 ? 0 : diff;
+      const d = Math.floor(diff / 86400),
+            h = Math.floor((diff % 86400) / 3600),
+            m = Math.floor((diff % 3600) / 60),
+            s = diff % 60;
+      document.getElementById('countdown').textContent = `${d}d ${h}h ${m}m ${s}s`;
     }
+
+    // Celebrate button
+    document.getElementById('celebrateBtn').addEventListener('click', ()=> {
+      confetti({ particleCount:150, spread:70, origin:{ y:0.6 }, colors:['#98dd96','#4e9c4f','#78c878'] });
+      frogs.forEach(f => {
+        gsap.to(f.position, { y: f.position.y + 20, duration:2, ease:"power1.out" });
+        gsap.to(f.material, { opacity:0, duration:2, ease:"power1.out" });
+      });
+    });
+
+    // 3D frog background
+    const container = document.getElementById('canvas-container');
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 30;
+
+    function createEmojiTexture(emoji){
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      ctx.font = '100px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(emoji, 64, 64);
+      return new THREE.CanvasTexture(canvas);
+    }
+    const frogTexture = createEmojiTexture('🐸');
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(1,1,1);
+    scene.add(dirLight);
+
+    const frogs = [];
+    for (let i = 0; i < 25; i++) {
+      const mat = new THREE.SpriteMaterial({ map: frogTexture, transparent:true, opacity:0.9 });
+      const spr = new THREE.Sprite(mat);
+      spr.position.set((Math.random()-0.5)*50, (Math.random()-0.5)*50, (Math.random()-0.5)*50);
+      const s = Math.random()*1.2 + 0.8;
+      spr.scale.set(s*2, s*2, 1);
+      spr.userData = {
+        speedX: Math.random()*0.02-0.01,
+        speedY: Math.random()*0.02-0.01,
+        speedZ: Math.random()*0.02-0.01,
+        rotationSpeed: Math.random()*0.01,
+        originalX: spr.position.x,
+        originalY: spr.position.y,
+        originalZ: spr.position.z,
+        floatDist: 2 + Math.random()*3
+      };
+      scene.add(spr);
+      frogs.push(spr);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = Date.now()*0.001;
+      frogs.forEach(f => {
+        f.position.x = f.userData.originalX + Math.sin(t*f.userData.speedX*10)*f.userData.floatDist;
+        f.position.y = f.userData.originalY + Math.sin(t*f.userData.speedY*10)*f.userData.floatDist;
+        f.position.z = f.userData.originalZ + Math.sin(t*f.userData.speedZ*10)*f.userData.floatDist;
+        f.rotation.z += f.userData.rotationSpeed;
+      });
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', ()=> {
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   </script>
 </body>
 </html>

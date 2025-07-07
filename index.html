@@ -186,6 +186,7 @@
     <!-- One frog sound element for all -->
     <audio id="frogSound" src="46241__esformouse__frog.wav" preload="auto"></audio>
 
+    <!-- ... All your content as in your previous HTML ... -->
     <!-- 1. Greetings with Frog -->
     <div class="chapter active" id="chapter-1">
       <div class="frog-emoji" id="greetingFrog" onclick="frogGreetingJump(this)">🐸</div>
@@ -296,11 +297,12 @@
       <button onclick="restart()">Hop Again 🔀</button>
     </div>
   </div>
-  <!-- Floating frogs OBJ+MTL background -->
+  <!-- Floating frogs OBJ+MTL+texture background -->
   <script>
-    // --- 3D Floating Frogs OBJ+MTL Background ---
+    // --- 3D Floating Frogs OBJ+MTL+Texture Background ---
     const OBJ_MODEL_PATH = 'StrawberryFrog_2.obj';
     const MTL_MODEL_PATH = 'StrawberryFrog_2.mtl';
+    // Textures are in "StrawberryFrog_Textures/" subfolder!
 
     const container = document.getElementById('canvas-container');
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -319,23 +321,24 @@
     scene.add(dirLight);
 
     const frogs = [];
-    let frogTemplate = null;
 
+    // MTLLoader supports setTexturePath so textures are found in the subfolder!
     const mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setTexturePath('StrawberryFrog_Textures/');
+    mtlLoader.setPath('./'); // MTL file is in root
+
     mtlLoader.load(MTL_MODEL_PATH, function(materials) {
       materials.preload();
       const loader = new THREE.OBJLoader();
       loader.setMaterials(materials);
+      loader.setPath('./'); // OBJ file is in root
       loader.load(OBJ_MODEL_PATH, function(obj) {
-        // Scale down the template before cloning!
         obj.scale.set(0.18, 0.18, 0.18); // adjust as needed for your frog
-        frogTemplate = obj;
         for (let i = 0; i < 10; i++) {
-          const frog = frogTemplate.clone(true);
+          const frog = obj.clone(true);
           frog.position.x = (Math.random() - 0.5) * 50;
           frog.position.y = (Math.random() - 0.5) * 50;
           frog.position.z = (Math.random() - 0.5) * 50;
-          // Optional: extra variation for each frog
           const scale = Math.random() * 0.09 + 0.13; // 0.13-0.22, keep small
           frog.scale.set(scale, scale, scale);
           frog.rotation.y = Math.random() * Math.PI * 2;

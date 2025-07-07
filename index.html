@@ -4,9 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Happy 20th Birthday, Vatraxaki MOU! 🐸💚</title>
-  <!-- Three.js and FBXLoader for floating frog background -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -14,14 +11,6 @@
       background: #e6fce4;
       color: #2d4c1e;
       overflow: hidden;
-    }
-    #canvas-container {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 1;
-      pointer-events: none;
     }
     #main-content {
       position: relative;
@@ -177,7 +166,6 @@
   </style>
 </head>
 <body>
-  <div id="canvas-container"></div>
   <div id="main-content">
     <!-- Background music and music control button -->
     <audio id="bgMusic" src="background-song.mp3" loop preload="auto"></audio>
@@ -242,7 +230,6 @@
       <div class="frog-emoji" onclick="frogGreetingJump(this)">📸</div>
       <h1>Our Memories</h1>
       <div class="gallery">
-        <!-- Replace src with your real image URLs or add more <img> tags -->
         <img src="your-photo1.jpg" alt="Memory 1"/>
         <img src="your-photo2.jpg" alt="Memory 2"/>
         <img src="your-photo3.jpg" alt="Memory 3"/>
@@ -295,79 +282,7 @@
       <button onclick="restart()">Hop Again 🔀</button>
     </div>
   </div>
-  <!-- Floating frogs FBX background -->
-  <script>
-    // --- 3D Floating Frogs FBX Background ---
-    const FBX_MODEL_PATH = 'StrawberryFrog_2.fbx';
 
-    const container = document.getElementById('canvas-container');
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    container.appendChild(renderer.domElement);
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 30;
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
-    scene.add(ambientLight);
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.1);
-    dirLight.position.set(5, 10, 7.5);
-    scene.add(dirLight);
-
-    const frogs = [];
-    const loader = new THREE.FBXLoader();
-
-    loader.load(FBX_MODEL_PATH, function (object) {
-      // If any mesh has no texture, set a fallback color
-      object.traverse(function (child) {
-        if (child.isMesh && !child.material.map) {
-          child.material.color.set(0x43a047);
-        }
-      });
-      object.scale.set(0.18, 0.18, 0.18);
-
-      for (let i = 0; i < 10; i++) {
-        const frog = object.clone(true);
-        frog.position.x = (Math.random() - 0.5) * 50;
-        frog.position.y = (Math.random() - 0.5) * 50;
-        frog.position.z = (Math.random() - 0.5) * 50;
-        const scale = Math.random() * 0.09 + 0.13;
-        frog.scale.set(scale, scale, scale);
-        frog.rotation.y = Math.random() * Math.PI * 2;
-        frog.userData = {
-          baseX: frog.position.x,
-          baseY: frog.position.y,
-          baseZ: frog.position.z,
-          floatDistance: 2 + Math.random() * 2,
-          phase: Math.random() * Math.PI * 2,
-          speed: Math.random() * 0.5 + 0.3
-        };
-        scene.add(frog);
-        frogs.push(frog);
-      }
-      animateFrogs();
-    });
-
-    function animateFrogs() {
-      requestAnimationFrame(animateFrogs);
-      const time = Date.now() * 0.0007;
-      frogs.forEach(frog => {
-        frog.position.x = frog.userData.baseX + Math.sin(time * frog.userData.speed + frog.userData.phase) * frog.userData.floatDistance;
-        frog.position.y = frog.userData.baseY + Math.cos(time * frog.userData.speed + frog.userData.phase) * frog.userData.floatDistance;
-        frog.rotation.y += 0.003;
-      });
-      renderer.render(scene, camera);
-    }
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-  </script>
-  <!-- Your main birthday script below (unchanged) -->
   <script>
     let current = 1;
     const frogName = "Froggy";
@@ -378,7 +293,6 @@
     // --- Navigation ---
     function nextChapter() {
       document.getElementById(`chapter-${current}`).classList.remove('active');
-      // Stop birthday song if leaving chapter 7
       if (current === 7) stopBirthdaySong();
       current++;
       document.getElementById(`chapter-${current}`).classList.add('active');
@@ -391,28 +305,20 @@
     }
     function restart() {
       document.getElementById(`chapter-${current}`).classList.remove('active');
-      // Stop birthday song if restarting from chapter 7
       if (current === 7) stopBirthdaySong();
       current = 1;
-      document.getElementById(`chapter-1`).classList.add('active');
+      document.getElementById('chapter-1').classList.add('active');
       hideConfetti();
       stopSong();
     }
 
-    // --- Frog Animation & Sound ---
+    // --- Frog Jump & Sound ---
     function frogGreetingJump(el) {
-      frogJump(el);
-      let audio = document.getElementById('frogSound');
-      if (audio) {
-        audio.currentTime = 0;
-        audio.play();
-      }
-      // Optionally start background music on first click (browsers require user interaction)
-      if (!musicPlaying) toggleMusic();
-    }
-    function frogJump(el) {
       el.classList.add('hop');
       setTimeout(() => el.classList.remove('hop'), 500);
+      const audio = document.getElementById('frogSound');
+      if (audio) { audio.currentTime = 0; audio.play(); }
+      if (!musicPlaying) toggleMusic();
     }
 
     // --- Catch the Fly Game ---
@@ -435,63 +341,47 @@
       document.getElementById('flyNextBtn').style.display = 'inline-block';
     }
 
-    // --- 10 Reasons Song ---
+    // --- Song Toggle ---
     function toggleSong() {
       const song = document.getElementById('song');
-      const bgMusic = document.getElementById('bgMusic');
+      const bg = document.getElementById('bgMusic');
       if (!songPlaying) {
-        if (bgMusic && !bgMusic.paused) bgMusic.pause();
-        song.play();
-        songPlaying = true;
+        if (bg && !bg.paused) bg.pause();
+        song.play(); songPlaying = true;
       } else {
-        song.pause();
-        song.currentTime = 0;
-        songPlaying = false;
-        if (bgMusic && musicPlaying) bgMusic.play();
+        song.pause(); song.currentTime = 0; songPlaying = false;
+        if (bg && musicPlaying) bg.play();
       }
     }
     function stopSong() {
       const song = document.getElementById('song');
-      song.pause();
-      song.currentTime = 0;
-      songPlaying = false;
+      song.pause(); song.currentTime = 0; songPlaying = false;
     }
 
     // --- Background Music ---
     function toggleMusic() {
       const music = document.getElementById('bgMusic');
       if (!musicPlaying) {
-        music.play();
-        musicPlaying = true;
-        musicBtn.textContent = '⏸️';
+        music.play(); musicPlaying = true; musicBtn.textContent = '⏸️';
       } else {
-        music.pause();
-        musicPlaying = false;
-        musicBtn.textContent = '🎵';
+        music.pause(); musicPlaying = false; musicBtn.textContent = '🎵';
       }
     }
-    // Update music button icon on page load
-    window.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('DOMContentLoaded', ()=> {
       musicBtn.textContent = '🎵';
     });
 
-    // --- Birthday Song in Last Chapter ---
+    // --- Birthday Song ---
     function playBirthdaySong() {
-      var song = document.getElementById('birthdaySong');
-      if (song) {
-        song.currentTime = 0;
-        song.play();
-      }
+      const song = document.getElementById('birthdaySong');
+      if (song) { song.currentTime = 0; song.play(); }
     }
     function stopBirthdaySong() {
-      var song = document.getElementById('birthdaySong');
-      if (song) {
-        song.pause();
-        song.currentTime = 0;
-      }
+      const song = document.getElementById('birthdaySong');
+      if (song) { song.pause(); song.currentTime = 0; }
     }
 
-    // --- Confetti for Birthday ---
+    // --- Confetti ---
     let confettiActive = false;
     function showConfetti() {
       const canvas = document.getElementById('confettiCanvas');
@@ -510,39 +400,33 @@
         });
       }
       confettiActive = true;
-      function draw() {
+      (function draw() {
         if (!confettiActive) return;
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        for (let i=0;i<particles.length;i++) {
+        particles.forEach(p => {
           ctx.beginPath();
-          ctx.arc(particles[i].x, particles[i].y, particles[i].r, 0, Math.PI * 2, false);
-          ctx.fillStyle = particles[i].color;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fillStyle = p.color;
           ctx.fill();
-          particles[i].y += Math.cos(particles[i].d) + 1 + particles[i].r/2;
-          ctx.fill();
-          particles[i].x += Math.sin(0.01*particles[i].d);
-          if (particles[i].y > canvas.height) {
-            particles[i].y = -10;
-            particles[i].x = Math.random() * canvas.width;
-          }
-        }
+          p.y += Math.cos(p.d) + 1 + p.r/2;
+          p.x += Math.sin(0.01*p.d);
+          if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+        });
         requestAnimationFrame(draw);
-      }
-      draw();
+      })();
     }
     function hideConfetti() {
       confettiActive = false;
       document.getElementById('confettiCanvas').style.display = 'none';
     }
-    window.addEventListener('resize', function() {
-      const canvas = document.getElementById('confettiCanvas');
-      if (canvas && canvas.style.display === 'block') {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    window.addEventListener('resize', ()=> {
+      const c = document.getElementById('confettiCanvas');
+      if (c.style.display === 'block') {
+        c.width = window.innerWidth; c.height = window.innerHeight;
       }
     });
 
-    // --- Countdown to next hug ---
+    // --- Countdown ---
     const nextHugDate = new Date("2025-09-20T18:00:00");
     function startCountdown() {
       updateCountdown();
@@ -552,12 +436,12 @@
       const now = new Date();
       let diff = Math.floor((nextHugDate - now) / 1000);
       if (diff < 0) diff = 0;
-      const days = Math.floor(diff / (3600*24));
-      const hours = Math.floor((diff % (3600*24)) / 3600);
+      const days = Math.floor(diff / 86400);
+      const hrs = Math.floor((diff % 86400) / 3600);
       const mins = Math.floor((diff % 3600) / 60);
       const secs = diff % 60;
       document.getElementById('countdown').textContent =
-        `${days}d ${hours}h ${mins}m ${secs}s`;
+        `${days}d ${hrs}h ${mins}m ${secs}s`;
     }
   </script>
 </body>
